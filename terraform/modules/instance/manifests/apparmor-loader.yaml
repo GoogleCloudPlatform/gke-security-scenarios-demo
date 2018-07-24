@@ -1,0 +1,163 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# The apparmor-loader DaemonSet will create an AppArmor profile as
+# defined in the configmap below.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apparmor
+---
+apiVersion: v1
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#create-a-configmap
+kind: ConfigMap
+metadata:
+  name: apparmor-profiles
+  namespace: apparmor
+data:
+  # Filename k8s-nginx maps to the definition of the nginx profile.
+  k8s-nginx: |-
+    #include <tunables/global>
+
+    # From https://github.com/jfrazelle/bane/blob/master/docker-nginx-sample
+    profile k8s-nginx flags=(attach_disconnected,mediate_deleted) {
+      #include <abstractions/base>
+
+      network inet tcp,
+      network inet udp,
+      network inet icmp,
+
+      deny network raw,
+
+      deny network packet,
+
+      file,
+      umount,
+
+      deny /bin/** wl,
+      deny /boot/** wl,
+      deny /dev/** wl,
+      deny /etc/** wl,
+      deny /home/** wl,
+      deny /lib/** wl,
+      deny /lib64/** wl,
+      deny /media/** wl,
+      deny /mnt/** wl,
+      deny /opt/** wl,
+      deny /proc/** wl,
+      deny /root/** wl,
+      deny /sbin/** wl,
+      deny /srv/** wl,
+      deny /tmp/** wl,
+      deny /sys/** wl,
+      deny /usr/** wl,
+
+      audit /** w,
+
+      /var/run/nginx.pid w,
+
+      /usr/sbin/nginx ix,
+
+      deny /bin/dash mrwklx,
+      deny /bin/sh mrwklx,
+      deny /usr/bin/top mrwklx,
+
+      capability chown,
+      capability dac_override,
+      capability setuid,
+      capability setgid,
+      capability net_bind_service,
+
+      deny @{PROC}/{*,**^[0-9*],sys/kernel/shm*} wkx,
+      deny @{PROC}/sysrq-trigger rwklx,
+      deny @{PROC}/mem rwklx,
+      deny @{PROC}/kmem rwklx,
+      deny @{PROC}/kcore rwklx,
+      deny mount,
+      deny /sys/[^f]*/** wklx,
+      deny /sys/f[^s]*/** wklx,
+      deny /sys/fs/[^c]*/** wklx,
+      deny /sys/fs/c[^g]*/** wklx,
+      deny /sys/fs/cg[^r]*/** wklx,
+      deny /sys/firmware/efi/efivars/** rwklx,
+      deny /sys/kernel/security/** rwklx,
+    }
+---
+# The example DaemonSet demonstrating how the profile loader can be deployed onto a cluster to
+# automatically load AppArmor profiles from a ConfigMap.
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: apparmor-loader
+  # Namespace must match that of the ConfigMap.
+  namespace: apparmor
+spec:
+  selector:
+    matchLabels:
+      daemon: apparmor-loader
+  template:
+    metadata:
+      name: apparmor-loader
+      labels:
+        daemon: apparmor-loader
+    spec:
+      # Do not mount a service account token, since these pods do not access the Kubernetes API
+      automountServiceAccountToken: false
+      containers:
+      - name: apparmor-loader
+        image: gcr.io/google-containers/apparmor-loader:0.2
+        args:
+          # Tell the loader to pull the /profiles directory every 30 seconds.
+          - -poll
+          - 30s
+          - /profiles
+        securityContext:
+          # The loader requires root permissions to actually load the profiles.
+          privileged: true
+        volumeMounts:
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: apparmor-includes
+          mountPath: /etc/apparmor.d
+          readOnly: true
+        - name: profiles
+          mountPath: /profiles
+          readOnly: true
+      volumes:
+      # The /sys directory must be mounted to interact with the AppArmor module.
+      - name: sys
+        hostPath:
+          path: /sys
+      # The /etc/apparmor.d directory is required for most apparmor include templates.
+      - name: apparmor-includes
+        hostPath:
+          path: /etc/apparmor.d
+      # Map in the profile data.
+      - name: profiles
+        configMap:
+          name: apparmor-profiles
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: apparmor
+  name: deny-apparmor-communication
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}

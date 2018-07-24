@@ -1,0 +1,90 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Create an nginx deployment whose containers are restricted by the k8s-nginx AppArmor
+# policy
+apiVersion: apps/v1
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 3
+  template:
+    metadata:
+      annotations:
+        # This specifies the AppArmor policy that should be applied
+        # Any policy referenced must first be loaded on each node in the cluster
+        container.apparmor.security.beta.kubernetes.io/nginx: localhost/k8s-nginx
+      labels:
+        app: nginx
+    spec:
+      # Do not mount a service account token, since these pods do not access the Kubernetes API
+      automountServiceAccountToken: false
+      containers:
+      - name: nginx
+        image: gcr.io/pso-examples/nginx-demo:v1.0.1
+        ports:
+        - containerPort: 8000
+
+---
+# Expose nginx as an externally accessible service on port 80
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx
+  name: nginx-lb
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: nginx
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+# See https://kubernetes.io/docs/concepts/services-networking/network-policies/
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  # Name the network policy
+  name: nginx-from-external
+spec:
+
+  # Define this as an ingress rule which allows us to restrict access to a set of pods.
+  policyTypes:
+  - Ingress
+
+  # Defines the set of pods to which this policy applies
+  # In this case, we apply the policy to pods labeled as app=nginx
+  podSelector:
+    matchLabels:
+      app: nginx
+
+  # Restrict ingress to port 8000 only
+  ingress:
+  - ports:
+    - port: 8000
+    from: []
