@@ -74,3 +74,7 @@ tf-apply:
 tf-destroy:
 	# Downloads the terraform providers and applies the configuration
 	cd terraform && terraform destroy
+
+.PHONY: validate
+validate:
+	./validate.sh
