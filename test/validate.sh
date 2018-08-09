@@ -34,14 +34,13 @@ remote_exec() {
   local command=$1; shift;
   echo "$(gcloud compute ssh gke-tutorial-bastion --command "${command}" 2>&1)"
 }
-remote_exec "source /etc/profile && exit" &> /dev/null
-
 
 # Our expected output should contain a calico pod, which will match 'calico-'
 OUTPUT=$CALICO
 remote_exec "kubectl get pods --all-namespaces --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
 echo "step 1 of the validation passed."
+
 remote_exec "kubectl apply -f manifests/nginx.yaml" &> /dev/null
 
 
@@ -50,6 +49,7 @@ OUTPUT=$ZERO
 remote_exec "kubectl get pods --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
 echo "step 2 of the validation passed."
+
 remote_exec "kubectl apply -f manifests/apparmor-loader.yaml" &> /dev/null
 remote_exec "kubectl delete pods -l app=nginx" &> /dev/null
 
@@ -72,7 +72,6 @@ EXT_IP="$(remote_exec "kubectl get svc nginx-lb -ojsonpath='{.status.loadBalance
 [ "$(curl -s -o /dev/null -w ''%{http_code}'' $EXT_IP/)" -eq 200 ] || exit 1
 echo "step 4 of the validation passed."
 
-
 remote_exec "kubectl apply -f manifests/pod-labeler.yaml" &> /dev/null
 
 # Wait for the rollout of the pod-labeler to finish.
@@ -91,4 +90,3 @@ OUTPUT=$UPDATED
 remote_exec "kubectl get pods --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
  echo "step 5 of the validation passed."
- 
