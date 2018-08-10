@@ -37,6 +37,8 @@ remote_exec() {
   echo "$(gcloud compute ssh gke-tutorial-bastion --command "${command}" 2>&1)"
 }
 
+remote_exec "source /etc/profile && exit"
+
 # Our expected output should contain a calico pod, which will match 'calico-'
 OUTPUT=$CALICO
 remote_exec "kubectl get pods --all-namespaces --show-labels" | grep "$OUTPUT" \
@@ -69,7 +71,17 @@ done
 echo "step 3 of the validation passed."
 
 # Grab the external IP of the service to confirm that nginx deployed correctly.
-EXT_IP="$(remote_exec "kubectl get svc nginx-lb -ojsonpath='{.status.loadBalancer.ingress[0].ip}'")"
+EXT_IP=""
+while true
+do
+  sleep 1
+  EXT_IP="$(remote_exec "kubectl get svc nginx-lb -ojsonpath='{.status.loadBalancer.ingress[0].ip}'")"
+  if [[ $EXT_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    break
+  else
+    continue
+  fi
+done
 [ "$(curl -s -o /dev/null -w '%{http_code}' "$EXT_IP"/)" -eq 200 ] || exit 1
 echo "step 4 of the validation passed."
 
