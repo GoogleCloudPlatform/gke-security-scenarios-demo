@@ -91,4 +91,4 @@ OUTPUT=$UPDATED
 remote_exec "kubectl get pods --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
  echo "step 5 of the validation passed."
- 
+
