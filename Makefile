@@ -77,4 +77,4 @@ tf-destroy:
 
 .PHONY: validate
 validate:
-	./validate.sh
+	test/validate.sh
