@@ -32,6 +32,8 @@ command -v gcloud >/dev/null 2>&1 || { \
 # redirected to stdout.
 remote_exec() {
   local command=$1; shift;
+
+  # shellcheck disable=SC2005
   echo "$(gcloud compute ssh gke-tutorial-bastion --command "${command}" 2>&1)"
 }
 
@@ -59,7 +61,6 @@ remote_exec "kubectl delete pods -l app=nginx" &> /dev/null
 while true
 do
   ROLLOUT=$(remote_exec "kubectl rollout status --watch=false deployment/nginx") &> /dev/null
-  echo $ROLLOUT
   if [[ $ROLLOUT = *"$NGINX_MESSAGE"* ]]; then
     break
   fi
@@ -69,7 +70,7 @@ echo "step 3 of the validation passed."
 
 # Grab the external IP of the service to confirm that nginx deployed correctly.
 EXT_IP="$(remote_exec "kubectl get svc nginx-lb -ojsonpath='{.status.loadBalancer.ingress[0].ip}'")"
-[ "$(curl -s -o /dev/null -w ''%{http_code}'' $EXT_IP/)" -eq 200 ] || exit 1
+[ "$(curl -s -o /dev/null -w '%{http_code}' "$EXT_IP"/)" -eq 200 ] || exit 1
 echo "step 4 of the validation passed."
 
 remote_exec "kubectl apply -f manifests/pod-labeler.yaml" &> /dev/null
@@ -78,7 +79,6 @@ remote_exec "kubectl apply -f manifests/pod-labeler.yaml" &> /dev/null
 while true
 do
   ROLLOUT=$(remote_exec "kubectl rollout status --watch=false deployment/pod-labeler") &> /dev/null
-  echo $ROLLOUT
   if [[ $ROLLOUT = *"$PL_MESSAGE"* ]]; then
     break
   fi
