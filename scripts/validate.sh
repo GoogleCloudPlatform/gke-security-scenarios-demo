@@ -17,39 +17,4 @@
 set -o nounset
 set -o pipefail
 
-SUCCESS="hello-server-"
-FAILURE="Error from server (Forbidden)"
-UPDATED="updated="
-OUTPUT=$SUCCESS
-
-source "./scripts/common.sh"
-
-source "./scripts/setup_manifests.sh"
-
-# OWNER
-owner "kubectl get pods -n dev" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 1 of the validation passed."
-owner "kubectl get pods -n test" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 2 of the validation passed."
-owner "kubectl get pods -n prod" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 3 of the validation passed."
-
-# AUDITOR
-auditor "kubectl get pods -n dev" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 4 of the validation passed."
-
-OUTPUT=$FAILURE
-auditor "kubectl get pods -n test" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 5 of the validation passed."
-auditor "kubectl get pods -n prod" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 6 of the validation passed."
-
-auditor "kubectl run shell -i --tty --image alpine:3.7 -- sh" | grep "$OUTPUT" &> \
-/dev/null || exit 1
-echo "step 7 of the validation passed."
-auditor "kubectl delete pod foo-x123" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 8 of the validation passed."
-
-OUTPUT=$UPDATED
-admin "kubectl get pods --show-labels" | grep "$OUTPUT" &> /dev/null || exit 1
-echo "step 9 of the validation passed."
+echo "****** TODO - Need to build validate script *******"
