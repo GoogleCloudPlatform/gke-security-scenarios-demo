@@ -15,6 +15,21 @@
 # Make will use bash instead of sh
 SHELL := /usr/bin/env bash
 
+ROOT := ${CURDIR}
+
+# create/delete/validate is for CICD
+.PHONY: create
+create:
+	@source $(ROOT)/scripts/create.sh
+
+.PHONY: validate
+validate:
+	@source $(ROOT)/scripts/validate.sh
+
+.PHONY: teardown
+teardown:
+	@source $(ROOT)/scripts/teardown.sh
+	
 # All is the first target in the file so it will get picked up when you just run 'make' on its own
 all: check_shell check_python check_golang check_terraform check_docker check_base_files check_headers check_trailing_whitespace
 
@@ -78,4 +93,3 @@ tf-destroy:
 .PHONY: validate
 validate:
 	test/validate.sh
-
