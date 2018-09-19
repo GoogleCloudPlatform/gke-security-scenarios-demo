@@ -88,10 +88,10 @@ spec:
             env.KEYFILE = GOOGLE_APPLICATION_CREDENTIALS
           }
           // Setup gcloud service account access
-          sh "gcloud auth activate-service-account --key-file=${env.KEYFILE}"
-          sh "gcloud config set compute/zone ${env.ZONE}"
-          sh "gcloud config set core/project ${env.PROJECT_ID}"
-          sh "gcloud config set compute/region ${env.REGION}"
+          sh "USER=jenkins gcloud auth activate-service-account --key-file=${env.KEYFILE}"
+          sh "USER=jenkins gcloud config set compute/zone ${env.ZONE}"
+          sh "USER=jenkins gcloud config set core/project ${env.PROJECT_ID}"
+          sh "USER=jenkins gcloud config set compute/region ${env.REGION}"
 
          }
         }
@@ -100,7 +100,7 @@ spec:
     stage('Create') {
       steps {
         container('k8s-node') {
-          sh "make create"
+          sh "USER=jenkins make create"
         }
       }
     }
@@ -108,7 +108,7 @@ spec:
     stage('Validate') {
       steps {
         container('k8s-node') {
-          sh "make validate"
+          sh "USER=jenkins make validate"
         }
       }
     }
@@ -117,8 +117,8 @@ spec:
   post {
     always {
       container('k8s-node') {
-        sh "make teardown"
-        sh "gcloud auth revoke"
+        sh "USER=jenkins make teardown"
+        sh "USER=jenkins gcloud auth revoke"
       }
     }
   }
