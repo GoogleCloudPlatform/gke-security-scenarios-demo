@@ -76,20 +76,6 @@ check_headers:
 .PHONY: setup-project
 setup-project:
 	# Enables the Google Cloud APIs needed
-	./enable-apis.sh
+	$(ROOT)/scripts/enable-apis.sh
 	# Runs the generate-tfvars.sh
-	./generate-tfvars.sh
-
-.PHONY: tf-apply
-tf-apply:
-	# Downloads the terraform providers and applies the configuration
-	cd terraform && terraform init && terraform apply
-
-.PHONY: tf-destroy
-tf-destroy:
-	# Downloads the terraform providers and applies the configuration
-	cd terraform && terraform destroy
-
-.PHONY: validate
-validate:
-	test/validate.sh
+	$(ROOT)/scripts/generate-tfvars.sh
