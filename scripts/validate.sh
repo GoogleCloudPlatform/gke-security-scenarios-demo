@@ -63,7 +63,7 @@ call_bastion "kubectl apply -f manifests/pod-labeler.yaml" | grep "created" &> /
 echo "step 7 of the validation passed."
 
 # Sleep for a few minutes to let the new pod create
-sleep 2m
+sleep 3m
 
 # Verify that the new nginx pods are created to replace the old and that they are started successfully
 call_bastion "kubectl get pods --show-labels" | grep "pod-labeler" &> /dev/null || exit 1
