@@ -43,9 +43,9 @@ call_bastion "kubectl apply -f manifests/apparmor-loader.yaml" | grep "created" 
 echo "step 3 of the validation passed."
 
 # Delete the nginx pods
-echo "Deleting nginx pods"
-call_bastion "kubectl delete pods -l app=nginx" | grep "deleted" &> /dev/null || exit 1
-echo "step 4 of the validation passed."
+#echo "Deleting nginx pods"
+#call_bastion "kubectl delete pods -l app=nginx" | grep "deleted" &> /dev/null || exit 1
+#echo "step 4 of the validation passed."
 
 # Verify that the new nginx pods are created to replace the old and that they are started successfully
 call_bastion "kubectl get pods -n dev" | grep "Running" &> /dev/null || exit 1
