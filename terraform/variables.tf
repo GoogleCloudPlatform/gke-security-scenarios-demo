@@ -59,7 +59,7 @@ variable "bastion_tags" {
 variable "cluster_name" {
   description = "The name to give the new Kubernetes cluster."
   type        = "string"
-  default     = "gke-security-demo"
+  default     = "gke-security-demo-ss"
 }
 
 variable "initial_node_count" {
@@ -109,5 +109,5 @@ variable "secondary_subnet_name" {
   // See https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips
   description = "The name to give the secondary subnet."
   type        = "string"
-  default     = "kube-net-secondary-sub"
+  default     = "kube-net-ss-secondary-sub"
 }

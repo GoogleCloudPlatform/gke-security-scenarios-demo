@@ -69,5 +69,5 @@ variable "grant_cluster_admin" {
 variable "vpc_name" {
   description = "Names the VPC in which to create the instance"
   type        = "string"
-  default     = "kube-net"
+  default     = "kube-net-ss"
 }

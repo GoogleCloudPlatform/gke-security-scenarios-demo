@@ -76,9 +76,9 @@ check_headers:
 .PHONY: setup-project
 setup-project:
 	# Enables the Google Cloud APIs needed
-	./enable-apis.sh
+	$(ROOT)/scripts/enable-apis.sh
 	# Runs the generate-tfvars.sh
-	./generate-tfvars.sh
+	$(ROOT)/scripts/generate-tfvars.sh
 
 .PHONY: tf-apply
 tf-apply:

@@ -18,8 +18,8 @@ limitations under the License.
 # your GCP account. They can be given privileges in the IAM panel just
 # like a user
 resource "google_service_account" "admin" {
-  account_id   = "gke-tutorial-admin"
-  display_name = "GKE Tutorial Admin"
+  account_id   = "gke-tutorial-admin-ss"
+  display_name = "GKE Tutorial Admin Security Scenarios"
 }
 
 # We are giving privileges to the service account
