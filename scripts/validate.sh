@@ -35,21 +35,21 @@ echo "Step 1 of the validation passed."
 # Verify that the pods are stuck in a "Pending" state with Message "Cannot enforce AppArmor:"
 echo "Checking pods"
 call_bastion "kubectl describe pods" | grep "Cannot enforce AppArmor:" &> /dev/null || exit 1
-echo "step 2 of the validation passed."
+echo "Step 2 of the validation passed."
 
 # Deploy the AppArmor loader daemonset
 echo "Deploying AppArmor"
 call_bastion "kubectl apply -f manifests/apparmor-loader.yaml" | grep "created" &> /dev/null || exit 1
-echo "step 3 of the validation passed."
+echo "Step 3 of the validation passed."
 
 # Delete the nginx pods
-#echo "Deleting nginx pods"
-#call_bastion "kubectl delete pods -l app=nginx" | grep "deleted" &> /dev/null || exit 1
-#echo "step 4 of the validation passed."
+echo "Deleting nginx pods"
+call_bastion "kubectl delete pods -l app=nginx" | grep "deleted" &> /dev/null || exit 1
+echo "Step 4 of the validation passed."
 
 # Verify that the new nginx pods are created to replace the old and that they are started successfully
 call_bastion "kubectl get pods -n dev" | grep "Running" &> /dev/null || exit 1
-echo "step 5 of the validation passed."
+echo "Step 5 of the validation passed."
 
 # Grab the external IP of the nginx pod to confirm that it is deployed correctly.
 EXT_IP="$(call bastion "kubectl get svc 'nginx-lb' -n default \
@@ -57,15 +57,15 @@ EXT_IP="$(call bastion "kubectl get svc 'nginx-lb' -n default \
 
 # Verify that the external IP returns the "Welcome to nginx!" page.
 curl "$EXT_IP" | grep "Welcome to nginx!" &> /dev/null || exit 1
-echo "step 6 of the validation passed."
+echo "Step 6 of the validation passed."
 
 # Setup the pod labeler
 call_bastion "kubectl apply -f manifests/pod-labeler.yaml" | grep "created" &> /dev/null || exit 1
-echo "step 7 of the validation passed."
+echo "Step 7 of the validation passed."
 
 # Sleep for a few minutes to let the new pod create
 sleep 3m
 
 # Verify that the new nginx pods are created to replace the old and that they are started successfully
 call_bastion "kubectl get pods --show-labels" | grep "pod-labeler" &> /dev/null || exit 1
-echo "step 8 of the validation passed."
+echo "Step 8 of the validation passed."
