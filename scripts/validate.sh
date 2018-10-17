@@ -76,7 +76,7 @@ while true
 do
   sleep 1
 
-  EXT_IP="$(remote_exec "kubectl get svc 'nginx-lb' -n -ojsonpath='{.status.loadBalancer.ingress[0].ip}'")"
+  EXT_IP="$(remote_exec "kubectl get svc 'nginx-lb' -ojsonpath='{.status.loadBalancer.ingress[0].ip}'")"
   if [[ $EXT_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     break
   else
