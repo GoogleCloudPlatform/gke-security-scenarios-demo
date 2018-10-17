@@ -80,7 +80,7 @@ In order to use the code in this demo you will need access to the following tool
 * Terraform v0.11.7
 * gcloud v206.0.0
 * kubectl v1.10.4
-* Kubernetes Engine v1.10
+* Kubernetes Engine (latest validMasterVersion)
 
 ## Deployment
 

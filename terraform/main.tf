@@ -16,6 +16,13 @@ limitations under the License.
 // https://www.terraform.io/docs/providers/google/r/google_container_cluster.html
 // Create the primary cluster for this project.
 
+// Provides access to available Google Container Engine versions in a zone for a given project.
+// https://www.terraform.io/docs/providers/google/d/google_container_engine_versions.html
+data "google_container_engine_versions" "on-prem" {
+  zone    = "${var.zone}"
+  project = "${var.project}"
+}
+
 # Syntax for using a custom module, which is a collection of resources
 # This module is called 'network' and is defined in the modules folder
 # We are creating an instance also called 'network'
@@ -59,7 +66,7 @@ resource "google_container_cluster" "primary" {
   zone               = "${var.zone}"
   network            = "${module.network.network_self_link}"
   subnetwork         = "${module.network.subnet_self_link}"
-  min_master_version = "${var.min_master_version}"
+  min_master_version = "${data.google_container_engine_versions.on-prem.latest_master_version}"
   initial_node_count = 3
 
   lifecycle {
