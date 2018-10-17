@@ -50,5 +50,5 @@ variable "secondary_ip_range" {
 variable "vpc_name" {
   description = "Names the VPC in which to create the network"
   type        = "string"
-  default     = "kube-net"
+  default     = "kube-net-ss"
 }
