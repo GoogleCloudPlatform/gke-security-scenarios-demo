@@ -30,7 +30,7 @@ module "network" {
   source   = "./modules/network"
   project  = "${var.project}"
   region   = "${var.region}"
-  vpc_name = "kube-net"
+  vpc_name = "kube-net-ss"
   tags     = "${var.bastion_tags}"
 }
 
@@ -56,7 +56,7 @@ module "bastion" {
   cluster_name          = "${var.cluster_name}"
   service_account_email = "${google_service_account.admin.email}"
   grant_cluster_admin   = "1"
-  vpc_name              = "kube-net"
+  vpc_name              = "kube-net-ss"
 }
 
 # This builds our Kubernetes Engine cluster

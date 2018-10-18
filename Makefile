@@ -15,6 +15,21 @@
 # Make will use bash instead of sh
 SHELL := /usr/bin/env bash
 
+ROOT := ${CURDIR}
+
+# create/delete/validate is for CICD
+.PHONY: create
+create:
+	@source $(ROOT)/scripts/create.sh
+
+.PHONY: validate
+validate:
+	@source $(ROOT)/scripts/validate.sh
+
+.PHONY: teardown
+teardown:
+	@source $(ROOT)/scripts/teardown.sh
+
 # All is the first target in the file so it will get picked up when you just run 'make' on its own
 all: check_shell check_python check_golang check_terraform check_docker check_base_files check_headers check_trailing_whitespace
 
@@ -61,21 +76,6 @@ check_headers:
 .PHONY: setup-project
 setup-project:
 	# Enables the Google Cloud APIs needed
-	./enable-apis.sh
+	$(ROOT)/scripts/enable-apis.sh
 	# Runs the generate-tfvars.sh
-	./generate-tfvars.sh
-
-.PHONY: tf-apply
-tf-apply:
-	# Downloads the terraform providers and applies the configuration
-	cd terraform && terraform init && terraform apply
-
-.PHONY: tf-destroy
-tf-destroy:
-	# Downloads the terraform providers and applies the configuration
-	cd terraform && terraform destroy
-
-.PHONY: validate
-validate:
-	test/validate.sh
-
+	$(ROOT)/scripts/generate-tfvars.sh
