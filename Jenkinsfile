@@ -33,7 +33,7 @@ metadata:
 spec:
   containers:
   - name: k8s-node
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.1.0
+    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:1.3.0
     imagePullPolicy: Always
     command:
     - cat
@@ -97,6 +97,16 @@ spec:
         }
     }
 
+    // linter testing
+    stage('Linter') {
+      steps {
+        container('k8s-node') {
+          sh "make all"
+        }
+      }
+    }
+
+    // create infrastructure
     stage('Create') {
       steps {
         container('k8s-node') {
@@ -105,6 +115,7 @@ spec:
       }
     }
 
+    // validate infrastructure and security settings
     stage('Validate') {
       steps {
         container('k8s-node') {
@@ -114,6 +125,7 @@ spec:
     }
   }
 
+  // deletion of infrastructure
   post {
     always {
       container('k8s-node') {
