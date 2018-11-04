@@ -128,14 +128,12 @@ If you need to override any of the defaults, simply replace the desired value(s)
 
 ### Provisioning the Kubernetes Engine Cluster
 
-Next, apply the terraform configuration with:
+Next, apply the terraform configuration and create the environment with:
 
 ```console
 # From within the project root, use make to apply the terraform
-make tf-apply
+make create
 ```
-
-When prompted if you want to deploy the plan, review the generated plan and enter `yes` to deploy the environment.
 
 ## Validation
 
@@ -340,7 +338,7 @@ And you'll see that the pods have an additional "updated=..." label.
 The test cluster can be completely torn down with the following command (type `yes` at the prompt to confirm)
 
 ```command
-make tf-destroy
+make teardown
 
 ...snip...
 module.network.google_compute_subnetwork.cluster-subnet: Destruction complete after 26s
@@ -360,7 +358,7 @@ The credentials that Terraform is using do not provide the necessary permissions
 
 ### Error during scp
 
-Occasionally, the gke-tutorial-bastion host will not be ready for the subsequent `scp` command, in this case there will be an error that looks like: ![terraform scp error](./img/bastion_scp_error.png) If this happens, simply re-run `make tf-apply`.
+Occasionally, the gke-tutorial-bastion host will not be ready for the subsequent `scp` command, in this case there will be an error that looks like: ![terraform scp error](./img/bastion_scp_error.png) If this happens, simply re-run `make create`.
 
 ### Invalid fingerprint error during Terraform operations
 
