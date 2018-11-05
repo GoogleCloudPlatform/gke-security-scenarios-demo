@@ -45,6 +45,7 @@ remote_exec "kubectl get pods --all-namespaces --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
 echo "step 1 of the validation passed."
 
+# Deploy nginx
 remote_exec "kubectl apply -f manifests/nginx.yaml" &> /dev/null
 
 
@@ -54,9 +55,11 @@ remote_exec "kubectl get pods --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
 echo "step 2 of the validation passed."
 
+# Apply the AppArmor daemonset policy loader
 remote_exec "kubectl apply -f manifests/apparmor-loader.yaml" &> /dev/null
-remote_exec "kubectl delete pods -l app=nginx" &> /dev/null
 
+# Delete the nginx pods to force them to be restarted quickly
+remote_exec "kubectl delete pods -l app=nginx" &> /dev/null
 
 # Wait for the rollout of nginx to finish, now that the apparmor profile
 # has been deployed.
@@ -74,18 +77,24 @@ echo "step 3 of the validation passed."
 EXT_IP=""
 while true
 do
-  sleep 1
-
   EXT_IP="$(remote_exec "kubectl get svc 'nginx-lb' -ojsonpath='{.status.loadBalancer.ingress[0].ip}'")"
   if [[ $EXT_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     break
-  else
-    continue
   fi
+  sleep 2
 done
-[ "$(curl -s -o /dev/null -w '%{http_code}' "$EXT_IP"/)" -eq 200 ] || exit 1
+
+# Wait for the service behind the LB to respond to curl
+while true
+do
+  if [[ "$(curl -s -o /dev/null -w '%{http_code}' "$EXT_IP"/)" -eq 200 ]]; then
+    break
+  fi
+  sleep 2
+done
 echo "step 4 of the validation passed."
 
+# Apply the pod labeler deployment
 remote_exec "kubectl apply -f manifests/pod-labeler.yaml" &> /dev/null
 
 # Wait for the rollout of the pod-labeler to finish.
@@ -102,4 +111,4 @@ done
 OUTPUT=$UPDATED
 remote_exec "kubectl get pods --show-labels" | grep "$OUTPUT" \
  &> /dev/null || exit 1
- echo "step 5 of the validation passed."
+echo "step 5 of the validation passed."

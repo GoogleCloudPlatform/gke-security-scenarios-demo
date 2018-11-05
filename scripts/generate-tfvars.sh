@@ -93,9 +93,14 @@ TFVARS_FILE="$ROOT/terraform/terraform.tfvars"
 # We don't want to overwrite a pre-existing tfvars file
 if [[ -f "${TFVARS_FILE}" ]]
 then
-    echo "${TFVARS_FILE} already exists." 1>&2
-    echo "Please remove or rename before regenerating." 1>&2
-    exit 1;
+    echo "${TFVARS_FILE} already exists, and will not be overwritten." 1>&2
+    echo "Contents are:" 1>&2
+    echo "---" 1>&2
+    cat "${TFVARS_FILE}"
+    echo "---" 1>&2
+    echo "Sleeping 10s before proceeding.  Press Ctrl-c to abort and make any desired changes." 1>&2
+    sleep 10
+    echo "Proceeding with the above contents." 1>&2
 else
 # Write out all the values we gathered into a tfvars file so you don't
 # have to enter the values manually
