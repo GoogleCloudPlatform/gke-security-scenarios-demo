@@ -71,7 +71,7 @@ check_trailing_whitespace:
 .PHONY: check_headers
 check_headers:
 	@echo "Checking file headers"
-	@python test/verify_boilerplate.py
+	@python3.7 test/verify_boilerplate.py
 
 .PHONY: setup-project
 setup-project:
