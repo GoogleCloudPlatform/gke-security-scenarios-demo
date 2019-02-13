@@ -356,7 +356,8 @@ And you'll see that the pods have an additional "updated=..." label.
 
 ## Tear down
 
-The test cluster can be completely torn down with the following command (type `yes` at the prompt to confirm)
+
+Log out of the bastion host and run the following to destroy the environment (type `yes` at the prompt to confirm)
 
 ```command
 make teardown
