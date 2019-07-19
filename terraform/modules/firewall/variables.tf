@@ -22,15 +22,15 @@ https://www.terraform.io/docs/configuration/variables.html
 
 variable "project" {
   description = "the project for this network"
-  type        = "string"
+  type        = string
 }
 
 variable "vpc" {
   description = "network for the firewall"
-  type        = "string"
+  type        = string
 }
 
 variable "net_tags" {
   description = "tags for the firewall"
-  type        = "list"
+  type        = list(string)
 }

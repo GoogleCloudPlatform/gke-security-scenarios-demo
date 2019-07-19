@@ -19,6 +19,7 @@ limitations under the License.
 // define containerTemplate but that has been deprecated in favor of the yaml
 // format
 // Reference: https://github.com/jenkinsci/kubernetes-plugin
+
 pipeline {
   agent {
     kubernetes {
@@ -33,7 +34,7 @@ metadata:
 spec:
   containers:
   - name: k8s-node
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${env.CONTAINER_VERSION}
+    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${env.JENKINS_CONTAINER_VERSION}
     command:
     - cat
     tty: true

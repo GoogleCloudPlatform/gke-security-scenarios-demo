@@ -25,7 +25,7 @@ resource "google_service_account" "admin" {
 # We are giving privileges to the service account
 # In this case we are assigning a role, 'roles/container.admin'
 resource "google_project_iam_member" "kube-api-admin" {
-  project = "${var.project}"
+  project = var.project
   role    = "roles/container.admin"
   member  = "serviceAccount:${google_service_account.admin.email}"
 }

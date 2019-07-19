@@ -22,52 +22,52 @@ https://www.terraform.io/docs/configuration/variables.html
 
 variable "hostname" {
   description = "The hostname to be given to the created instance"
-  type        = "string"
+  type        = string
 }
 
 variable "machine_type" {
   description = "The machine type to use for the created instance"
-  type        = "string"
+  type        = string
 }
 
 variable "project" {
   description = "The project in which to create the instance"
-  type        = "string"
+  type        = string
 }
 
 variable "zone" {
   description = "The zone in which to create the instance"
-  type        = "string"
+  type        = string
 }
 
 variable "tags" {
   description = "Tags to add to the created instance tags"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "cluster_subnet" {
   description = "The subnet in which to home the private interface of the created instance"
-  type        = "string"
+  type        = string
 }
 
 variable "cluster_name" {
   description = "The name of the GKE cluster to which this host will connect"
-  type        = "string"
+  type        = string
 }
 
 variable "service_account_email" {
   description = "Identifies the service account to use for the created instance"
-  type        = "string"
+  type        = string
 }
 
 variable "grant_cluster_admin" {
   description = "Determines whether the instance is granted GKE admin privileges"
-  type        = "string"
+  type        = string
   default     = "0"
 }
 
 variable "vpc_name" {
   description = "Names the VPC in which to create the instance"
-  type        = "string"
+  type        = string
   default     = "kube-net-ss"
 }
