@@ -40,4 +40,3 @@ resource "google_compute_network" "gke-network" {
   project                 = var.project
   auto_create_subnetworks = false
 }
-

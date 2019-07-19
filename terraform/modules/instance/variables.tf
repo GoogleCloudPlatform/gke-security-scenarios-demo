@@ -71,4 +71,3 @@ variable "vpc_name" {
   type        = string
   default     = "kube-net-ss"
 }
-

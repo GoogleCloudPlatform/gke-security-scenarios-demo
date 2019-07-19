@@ -105,4 +105,3 @@ variable "secondary_subnet_name" {
   type        = string
   default     = "kube-net-ss-secondary-sub"
 }
-

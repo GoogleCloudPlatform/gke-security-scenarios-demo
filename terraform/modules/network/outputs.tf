@@ -26,4 +26,3 @@ output "network_self_link" {
 output "subnet_self_link" {
   value = google_compute_subnetwork.cluster-subnet.self_link
 }
-

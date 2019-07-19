@@ -31,4 +31,3 @@ resource "google_compute_firewall" "bastion-ssh" {
 
   target_tags = var.net_tags
 }
-

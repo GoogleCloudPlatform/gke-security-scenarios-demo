@@ -34,4 +34,3 @@ variable "net_tags" {
   description = "tags for the firewall"
   type        = list(string)
 }
-

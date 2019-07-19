@@ -121,4 +121,3 @@ provisioner "local-exec" {
 command = "gcloud compute scp --project ${var.project} --zone ${var.zone} --recurse ${path.module}/manifests ${var.hostname}:"
 }
 }
-

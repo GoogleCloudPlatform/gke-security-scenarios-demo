@@ -19,6 +19,7 @@ limitations under the License.
 // define containerTemplate but that has been deprecated in favor of the yaml
 // format
 // Reference: https://github.com/jenkinsci/kubernetes-plugin
+
 pipeline {
   agent {
     kubernetes {
