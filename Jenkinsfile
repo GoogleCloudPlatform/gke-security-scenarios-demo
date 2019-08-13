@@ -19,12 +19,11 @@ limitations under the License.
 
 // Reference: https://github.com/jenkinsci/kubernetes-plugin
 // set up pod label and GOOGLE_APPLICATION_CREDENTIALS (for Terraform)
-def label = "k8s-infra"
-def containerName = "k8s-node"
+def containerName = "security-scenario"
 def GOOGLE_APPLICATION_CREDENTIALS = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
 def jenkins_container_version = env.JENKINS_CONTAINER_VERSION
 
-podTemplate(label: label,
+podTemplate(
     containers: [
         containerTemplate(name: "${containerName}",
             image: "gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${jenkins_container_version}",
@@ -39,7 +38,7 @@ podTemplate(label: label,
         secretName: 'jenkins-deploy-dev-infra'
     )]
 ) {
-    node(label) {
+    node(POD_LABEL) {
         try {
             // Options covers all other job properties or wrapper functions that apply to entire Pipeline.
             properties([disableConcurrentBuilds()])
