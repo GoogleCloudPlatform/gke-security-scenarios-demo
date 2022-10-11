@@ -17,7 +17,7 @@
 # "---------------------------------------------------------"
 # "-                                                       -"
 # "-  Helper script to generate terraform variables        -"
-# "-  file based on glcoud defaults.                       -"
+# "-  file based on gcloud defaults.                       -"
 # "-                                                       -"
 # "---------------------------------------------------------"
 
@@ -33,7 +33,7 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 command -v git >/dev/null 2>&1 || { \
  echo >&2 "I require git but it's not installed.  Aborting."; exit 1; }
 
-# glcoud is required for this tutorial
+# gcloud is required for this tutorial
 command -v gcloud >/dev/null 2>&1 || { \
  echo >&2 "I require gcloud but it's not installed.  Aborting."; exit 1; }
 
