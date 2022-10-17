@@ -14,24 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Configure providers and pin versions
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+      version = "~> 2.1.2"
+    }
+    template = {
+      source = "hashicorp/template"
+      version = "~> 2.1.2"
+    }
+    null = {
+      source = "hashicorp/null"
+      version = "~> 2.1.2"
+    }
+  }
+}
+
 // Configures the default project and zone for underlying Google Cloud API calls
 provider "google" {
   project = var.project
   zone    = var.zone
-  version = "~> 2.11.0"
-}
-
-// Pins the version of the "random" provider
-provider "random" {
-  version = "~> 2.1.2"
-}
-
-// Pins the version of the "template" provider
-provider "template" {
-  version = "~> 2.1.2"
-}
-
-// Pins the version of the "null" provider
-provider "null" {
-  version = "~> 2.1.2"
 }
