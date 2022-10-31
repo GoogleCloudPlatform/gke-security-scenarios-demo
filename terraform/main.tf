@@ -63,7 +63,7 @@ module "bastion" {
 resource "google_container_cluster" "primary" {
   name               = var.cluster_name
   project            = var.project
-  zone               = var.zone
+  location           = var.zone
   network            = module.network.network_self_link
   subnetwork         = module.network.subnet_self_link
   min_master_version = data.google_container_engine_versions.on-prem.latest_master_version
@@ -72,8 +72,7 @@ resource "google_container_cluster" "primary" {
   lifecycle {
     ignore_changes = [ip_allocation_policy.0.services_secondary_range_name]
   }
-
-  additional_zones = []
+  
 
   // Scopes necessary for the nodes to function correctly
   node_config {
@@ -108,6 +107,7 @@ resource "google_container_cluster" "primary" {
   // private. Nodes communicate to the master through this private IP address.
   private_cluster_config {
     enable_private_nodes   = true
+    enable_private_endpoint = false
     master_ipv4_cidr_block = "10.0.90.0/28"
   }
 
