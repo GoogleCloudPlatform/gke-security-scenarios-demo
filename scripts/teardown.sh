@@ -29,6 +29,10 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 # shellcheck source=scripts/common.sh
 source "$ROOT/scripts/common.sh"
 
+# Generate the variables to be used by Terraform
+# shellcheck source=scripts/generate-tfvars.sh
+source "$ROOT/scripts/generate-tfvars.sh"
+
 # Tear down Terraform-managed resources and remove generated tfvars
 cd "$ROOT/terraform" || exit; terraform destroy -input=false -auto-approve
 rm -f "$ROOT/terraform/terraform.tfvars"
