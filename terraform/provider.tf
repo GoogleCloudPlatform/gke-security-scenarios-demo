@@ -19,7 +19,7 @@ terraform {
   required_providers {
     random = {
       source = "hashicorp/random"
-      version = "~> 2.1.2"
+      version = "~> 3.6.0"
     }
     template = {
       source = "hashicorp/template"
